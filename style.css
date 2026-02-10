@@ -1,12 +1,11 @@
 :root {
   --sky: #70c5ce;
-  --panel: rgba(255, 255, 255, 0.1);
-  --text-muted: rgba(0, 0, 0, 0.6);
+  --panel: rgba(255, 255, 255, 0.12);
+  --muted: rgba(0,0,0,0.6);
+  --accent: #ffd166;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
   margin: 0;
@@ -18,39 +17,28 @@ body {
   min-height: 100vh;
 }
 
-main {
-  text-align: center;
-}
-
-h1 {
-  margin-bottom: 6px;
-}
+main { text-align: center; }
 
 .hint {
   font-size: 14px;
-  color: var(--text-muted);
+  color: var(--muted);
   margin-bottom: 10px;
 }
 
 .game-container {
   background: var(--panel);
   padding: 12px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  border-radius: 14px;
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
 }
 
 canvas {
   display: block;
-  border-radius: 8px;
+  border-radius: 10px;
 }
 
 .hud {
   margin-top: 8px;
-  display: flex;
-  justify-content: center;
-}
-
-#score {
   font-weight: bold;
   font-size: 18px;
 }
