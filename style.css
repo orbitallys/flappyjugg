@@ -16,11 +16,46 @@ body {
   justify-content: center;
   padding: 24px;
   color: #000;
+  
+  cursor: url('assets/cursor.png'), auto; 
+}
+
+.arcade-layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.ad-banner {
+  width: 200px;
+  height: 600px;
+  background: rgba(0,0,0,0.1);
+  border: 2px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.ad-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 900px) {
+  .ad-banner {
+    display: none;
+  }
 }
 
 main {
   width: 420px;
   text-align: center;
+  flex-shrink: 0; 
 }
 
 h1 {
@@ -46,7 +81,7 @@ canvas {
   display: block;
   width: 100%;
   height: auto;
-  background: #9fd0e3;
+  background: #beeded;
   border: 4px solid #000;
 }
 
