@@ -23,6 +23,7 @@ let best = Number(localStorage.getItem("flappy_best") || 0);
 let frames = 0;
 let shake = 0;
 
+/* bird */
 const bird = {
   x: 100,
   y: H / 2,
@@ -49,6 +50,7 @@ const bird = {
   }
 };
 
+/* ground */
 const ground = {
   h: 96,
   y: H - 96,
@@ -69,6 +71,7 @@ const ground = {
   }
 };
 
+/* pipes */
 const pipes = [];
 const pipeGap = 150;
 const pipeWidth = 56;
@@ -116,8 +119,10 @@ function update() {
         p.passed = true;
         score++;
         document.getElementById("score").textContent = score;
-        sounds.score.currentTime = 0;
-        sounds.score.play();
+        try {
+          sounds.score.currentTime = 0;
+          sounds.score.play();
+        } catch (err) { }
       }
 
       if (p.x < -pipeWidth) pipes.splice(i, 1);
@@ -178,8 +183,13 @@ function draw() {
 
   for (const p of pipes) {
     const img = images["redpipe.PNG"];
-    if (img.complete && img.naturalWidth) {
-      ctx.drawImage(img, p.x, 0, pipeWidth, p.top);
+    if (img && img.complete && img.naturalWidth !== 0) {
+      ctx.save();
+      ctx.translate(p.x + pipeWidth / 2, p.top);
+      ctx.scale(1, -1);
+      ctx.drawImage(img, -pipeWidth / 2, 0, pipeWidth, p.top);
+      ctx.restore();
+
       ctx.drawImage(
         img,
         p.x,
@@ -199,8 +209,10 @@ function draw() {
     }
   }
 
+  // ground and bird
   ground.draw();
   bird.draw();
+
   ctx.restore();
 
   if (state === "start") {
@@ -223,7 +235,9 @@ function loop() {
 
 function unlockSound() {
   if (!soundUnlocked) {
-    Object.values(sounds).forEach(s => s.play().then(() => s.pause()));
+    Object.values(sounds).forEach(s => {
+      s.play().then(() => s.pause()).catch(() => {});
+    });
     soundUnlocked = true;
   }
 }
