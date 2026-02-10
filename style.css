@@ -1,6 +1,6 @@
 :root {
-  --sky: #70c5ce;
-  --panel: rgba(255, 255, 255, 0.12);
+  --sky: #88c4e8;
+  --panel: rgba(217, 217, 217, 0.12);
   --muted: rgba(0,0,0,0.6);
   --accent: #ffd166;
 }
@@ -10,7 +10,7 @@
 body {
   margin: 0;
   font-family: system-ui, sans-serif;
-  background: linear-gradient(#9be7ef, var(--sky));
+  background: linear-gradient(#c70c0c, var(--sky));
   display: flex;
   justify-content: center;
   align-items: center;
@@ -28,8 +28,7 @@ main { text-align: center; }
 .game-container {
   background: var(--panel);
   padding: 12px;
-  border-radius: 14px;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+  border-radius: 1px;
 }
 
 canvas {
