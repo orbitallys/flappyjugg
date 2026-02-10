@@ -1,3 +1,4 @@
-# Flappy Jugg
+# Flappy Juggernauts
 
-A tiny challenge for the small birds out there.
+
+He's soaring... he's landing... he's made it!
