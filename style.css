@@ -1,0 +1,115 @@
+:root {
+  --sky: #88c4e8;
+  --panel: rgba(217, 217, 217, 0.12);
+  --muted: rgba(0,0,0,0.6);
+  --accent: #ffd166;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; padding: 0; }
+
+body {
+  background: var(--sky);
+  font-family: Arial, Helvetica, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: #000;
+  
+  cursor: url('assets/cursor.png'), auto; 
+}
+
+.arcade-layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.ad-banner {
+  width: 200px;
+  height: 600px;
+  background: rgba(0,0,0,0.1); /* Placeholder gray if image missing */
+  border: 2px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.ad-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (max-width: 900px) {
+  .ad-banner {
+    display: none;
+  }
+}
+
+main {
+  width: 420px;
+  text-align: center;
+  flex-shrink: 0; 
+}
+
+h1 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: normal;
+}
+
+.hint {
+  margin: 0 0 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.game-container {
+  background: var(--panel);
+  border: 2px solid #000;
+  padding: 10px;
+  display: inline-block;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #beeded;
+  border: 4px solid #000;
+}
+
+.hud {
+  margin-top: 8px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  align-items: center;
+}
+
+#score {
+  font-weight: bold;
+  font-size: 16px;
+  color: #000;
+  background: var(--accent);
+  padding: 6px 10px;
+  border: 1px solid #000;
+}
+
+#screensaver {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background-color: #000;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#screensaver.hidden { display: none; }
+#screensaver img { max-width: 100%; max-height: 100%; object-fit: contain; }
