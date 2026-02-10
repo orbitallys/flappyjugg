@@ -127,7 +127,7 @@ function drawScoreScreen() {
 
   ctx.font = "bold 42px system-ui";
   ctx.fillStyle = "#fff";
-  ctx.fillText("💥 GAME OVER 💥", W/2, H/2 - 80);
+  ctx.fillText("Crashed!", W/2, H/2 - 80);
 
   ctx.font = "bold 28px system-ui";
   ctx.fillStyle = "#ffd166";
@@ -220,6 +220,7 @@ document.addEventListener("click", () => {
 
 reset();
 loop();
+
 
 
 
