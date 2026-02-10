@@ -5,7 +5,7 @@ const W = canvas.width;
 const H = canvas.height;
 
 const images = {};
-["jughead.PNG", "pipe.PNG", "ground.PNG"].forEach(name => {
+["jughead.PNG", "redpipe.PNG", "ground.PNG"].forEach(name => {
   const img = new Image();
   img.src = `assets/${name}`;
   images[name] = img;
@@ -157,7 +157,7 @@ function draw() {
   ctx.fillRect(0, 0, W, H);
 
   for (const p of pipes) {
-    const img = images["pipe.PNG"];
+    const img = images["redpipe.PNG"];
     if (img.complete && img.naturalWidth) {
       ctx.drawImage(img, p.x, 0, pipeWidth, p.top);
       ctx.drawImage(
@@ -220,5 +220,6 @@ document.addEventListener("click", () => {
 
 reset();
 loop();
+
 
 
