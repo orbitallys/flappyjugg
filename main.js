@@ -11,21 +11,18 @@ const images = {};
   images[name] = img;
 });
 
-/* sounds */
 const sounds = {
   score: new Audio("assets/score.mp3"),
   hit: new Audio("assets/hit.mp3")
 };
 let soundUnlocked = false;
 
-/* game state */
 let state = "start";
 let score = 0;
 let best = Number(localStorage.getItem("flappy_best") || 0);
 let frames = 0;
 let shake = 0;
 
-/* bird */
 const bird = {
   x: 100,
   y: H / 2,
@@ -44,15 +41,34 @@ const bird = {
   draw() {
     const img = images["jughead.PNG"];
     if (img.complete && img.naturalWidth) {
-      ctx.drawImage(img, this.x - this.w/2, this.y - this.h/2, this.w, this.h);
+      ctx.drawImage(img, this.x - this.w / 2, this.y - this.h / 2, this.w, this.h);
     } else {
       ctx.fillStyle = "#ff0";
-      ctx.fillRect(this.x - this.w/2, this.y - this.h/2, this.w, this.h);
+      ctx.fillRect(this.x - this.w / 2, this.y - this.h / 2, this.w, this.h);
     }
   }
 };
 
-/* pipes */
+const ground = {
+  h: 96,
+  y: H - 96,
+  speed: 2.2,
+  offset: 0,
+  update() {
+    this.offset = (this.offset + this.speed) % W;
+  },
+  draw() {
+    const img = images["ground.PNG"];
+    if (img.complete && img.naturalWidth) {
+      ctx.drawImage(img, -this.offset, this.y, W, this.h);
+      ctx.drawImage(img, W - this.offset, this.y, W, this.h);
+    } else {
+      ctx.fillStyle = "#c2a16a";
+      ctx.fillRect(0, this.y, W, this.h);
+    }
+  }
+};
+
 const pipes = [];
 const pipeGap = 150;
 const pipeWidth = 56;
@@ -88,6 +104,7 @@ function update() {
 
   if (state === "playing") {
     bird.update();
+    ground.update();
 
     if (frames % 100 === 0) spawnPipe();
 
@@ -106,40 +123,43 @@ function update() {
       if (p.x < -pipeWidth) pipes.splice(i, 1);
 
       if (
-        bird.x + bird.w/2 > p.x &&
-        bird.x - bird.w/2 < p.x + pipeWidth &&
-        (bird.y - bird.h/2 < p.top ||
-         bird.y + bird.h/2 > p.top + pipeGap)
+        bird.x + bird.w / 2 > p.x &&
+        bird.x - bird.w / 2 < p.x + pipeWidth &&
+        (bird.y - bird.h / 2 < p.top ||
+         bird.y + bird.h / 2 > p.top + pipeGap)
       ) {
         die();
       }
     }
 
-    if (bird.y < 0 || bird.y > H) die();
+    if (bird.y < 0 || bird.y + bird.h / 2 >= ground.y) {
+      bird.y = ground.y - bird.h / 2;
+      die();
+    }
   }
 }
 
 function drawScoreScreen() {
-  ctx.fillStyle = "rgba(0,0,0,0.6)";
+  ctx.fillStyle = "rgba(0,0,0,0.65)";
   ctx.fillRect(0, 0, W, H);
 
   ctx.textAlign = "center";
 
   ctx.font = "bold 42px system-ui";
   ctx.fillStyle = "#fff";
-  ctx.fillText("Crashed!", W/2, H/2 - 80);
+  ctx.fillText("Crashed!", W / 2, H / 2 - 80);
 
   ctx.font = "bold 28px system-ui";
   ctx.fillStyle = "#ffd166";
-  ctx.fillText(`Score: ${score}`, W/2, H/2 - 10);
+  ctx.fillText(`Score: ${score}`, W / 2, H / 2 - 10);
 
   ctx.font = "20px system-ui";
   ctx.fillStyle = "#fff";
-  ctx.fillText(`Best: ${best}`, W/2, H/2 + 30);
+  ctx.fillText(`Best: ${best}`, W / 2, H / 2 + 30);
 
   ctx.font = "16px system-ui";
   ctx.fillStyle = "#ddd";
-  ctx.fillText("Press R to retry", W/2, H/2 + 70);
+  ctx.fillText("Press R to retry", W / 2, H / 2 + 70);
 }
 
 function draw() {
@@ -165,15 +185,21 @@ function draw() {
         p.x,
         p.top + pipeGap,
         pipeWidth,
-        H - p.top - pipeGap
+        ground.y - (p.top + pipeGap)
       );
     } else {
       ctx.fillStyle = "#2ecc71";
       ctx.fillRect(p.x, 0, pipeWidth, p.top);
-      ctx.fillRect(p.x, p.top + pipeGap, pipeWidth, H);
+      ctx.fillRect(
+        p.x,
+        p.top + pipeGap,
+        pipeWidth,
+        ground.y - (p.top + pipeGap)
+      );
     }
   }
 
+  ground.draw();
   bird.draw();
   ctx.restore();
 
@@ -181,7 +207,7 @@ function draw() {
     ctx.fillStyle = "#000";
     ctx.font = "20px system-ui";
     ctx.textAlign = "center";
-    ctx.fillText("Click or press Space", W/2, H/2 - 60);
+    ctx.fillText("Click or press Space", W / 2, H / 2 - 60);
   }
 
   if (state === "over") {
@@ -195,7 +221,6 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
-/* input */
 function unlockSound() {
   if (!soundUnlocked) {
     Object.values(sounds).forEach(s => s.play().then(() => s.pause()));
@@ -220,7 +245,3 @@ document.addEventListener("click", () => {
 
 reset();
 loop();
-
-
-
-
