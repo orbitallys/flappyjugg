@@ -25,6 +25,10 @@ let best = Number(localStorage.getItem("flappy_best") || 0);
 let frames = 0;
 let shake = 0;
 
+let keyHistory = "";
+const secretCode = "juggernaut";
+let isScreensaverActive = false;
+
 /* bird */
 const bird = {
   x: 100,
@@ -109,6 +113,8 @@ function die() {
 }
 
 function update() {
+  if (isScreensaverActive) return;
+
   frames++;
 
   if (state === "playing") {
@@ -185,6 +191,7 @@ function drawScoreScreen() {
 }
 
 function draw() {
+  
   ctx.save();
 
   if (shake > 0) {
@@ -226,7 +233,6 @@ function draw() {
     }
   }
 
-  // ground and bird
   ground.draw();
   bird.draw();
 
@@ -259,16 +265,45 @@ function unlockSound() {
   }
 }
 
+// screensaver
+
 document.addEventListener("keydown", e => {
+  const k = e.key.toLowerCase();
+  
+  keyHistory += k;
+  if (keyHistory.length > 20) {
+    keyHistory = keyHistory.slice(-20);
+  }
+  
+  if (keyHistory.endsWith(secretCode)) {
+    isScreensaverActive = true;
+    document.getElementById("screensaver").classList.remove("hidden");
+    return;
+  }
+
+  if (isScreensaverActive) {
+    isScreensaverActive = false;
+    document.getElementById("screensaver").classList.add("hidden");
+    keyHistory = ""; 
+    return;
+  }
+
   if (e.code === "Space") {
     unlockSound();
     if (state === "start") state = "playing";
     if (state === "playing") bird.flap();
   }
-  if (e.key.toLowerCase() === "r") reset();
+  if (k === "r") reset();
 });
 
 document.addEventListener("click", () => {
+  if (isScreensaverActive) {
+    isScreensaverActive = false;
+    document.getElementById("screensaver").classList.add("hidden");
+    keyHistory = ""; 
+    return;
+  }
+
   unlockSound();
   if (state === "start") state = "playing";
   if (state === "playing") bird.flap();
