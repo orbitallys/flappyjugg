@@ -32,7 +32,7 @@ body {
 .ad-banner {
   width: 200px;
   height: 600px;
-  background: rgba(0,0,0,0.1); /* Placeholder gray if image missing */
+  background: rgba(0,0,0,0.1);
   border: 2px solid #000;
   display: flex;
   align-items: center;
