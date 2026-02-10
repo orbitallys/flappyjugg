@@ -157,7 +157,7 @@ function draw() {
   ctx.fillRect(0, 0, W, H);
 
   for (const p of pipes) {
-    const img = images["pipe.png"];
+    const img = images["pipe.PNG"];
     if (img.complete && img.naturalWidth) {
       ctx.drawImage(img, p.x, 0, pipeWidth, p.top);
       ctx.drawImage(
@@ -220,4 +220,5 @@ document.addEventListener("click", () => {
 
 reset();
 loop();
+
 
