@@ -11,9 +11,21 @@ const images = {};
   images[name] = img;
 });
 
-let gameState = "start";
-let score = 0;
+/* sounds */
+const sounds = {
+  score: new Audio("assets/score.wav"),
+  hit: new Audio("assets/hit.wav")
+};
+let soundUnlocked = false;
 
+/* game state */
+let state = "start";
+let score = 0;
+let best = Number(localStorage.getItem("flappy_best") || 0);
+let frames = 0;
+let shake = 0;
+
+/* bird */
 const bird = {
   x: 100,
   y: H / 2,
@@ -40,14 +52,15 @@ const bird = {
   }
 };
 
+/* pipes */
 const pipes = [];
 const pipeGap = 150;
 const pipeWidth = 56;
-const pipeSpeed = 2;
+const pipeSpeed = 2.2;
 
 function spawnPipe() {
-  const top = 80 + Math.random() * 200;
-  pipes.push({ x: W + 20, top, passed: false });
+  const top = 80 + Math.random() * 220;
+  pipes.push({ x: W + 40, top, passed: false });
 }
 
 function reset() {
@@ -55,12 +68,25 @@ function reset() {
   bird.y = H / 2;
   bird.vel = 0;
   score = 0;
-  gameState = "start";
+  frames = 0;
+  state = "start";
   document.getElementById("score").textContent = score;
 }
 
+function die() {
+  if (state !== "playing") return;
+  state = "over";
+  shake = 20;
+  sounds.hit.currentTime = 0;
+  sounds.hit.play();
+  best = Math.max(best, score);
+  localStorage.setItem("flappy_best", best);
+}
+
 function update() {
-  if (gameState === "playing") {
+  frames++;
+
+  if (state === "playing") {
     bird.update();
 
     if (frames % 100 === 0) spawnPipe();
@@ -73,6 +99,8 @@ function update() {
         p.passed = true;
         score++;
         document.getElementById("score").textContent = score;
+        sounds.score.currentTime = 0;
+        sounds.score.play();
       }
 
       if (p.x < -pipeWidth) pipes.splice(i, 1);
@@ -83,18 +111,47 @@ function update() {
         (bird.y - bird.h/2 < p.top ||
          bird.y + bird.h/2 > p.top + pipeGap)
       ) {
-        gameState = "over";
+        die();
       }
     }
 
-    if (bird.y > H || bird.y < 0) {
-      gameState = "over";
-    }
+    if (bird.y < 0 || bird.y > H) die();
   }
 }
 
+function drawScoreScreen() {
+  ctx.fillStyle = "rgba(0,0,0,0.6)";
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.textAlign = "center";
+
+  ctx.font = "bold 42px system-ui";
+  ctx.fillStyle = "#fff";
+  ctx.fillText("💥 GAME OVER 💥", W/2, H/2 - 80);
+
+  ctx.font = "bold 28px system-ui";
+  ctx.fillStyle = "#ffd166";
+  ctx.fillText(`Score: ${score}`, W/2, H/2 - 10);
+
+  ctx.font = "20px system-ui";
+  ctx.fillStyle = "#fff";
+  ctx.fillText(`Best: ${best}`, W/2, H/2 + 30);
+
+  ctx.font = "16px system-ui";
+  ctx.fillStyle = "#ddd";
+  ctx.fillText("Press R to retry", W/2, H/2 + 70);
+}
+
 function draw() {
-  ctx.clearRect(0, 0, W, H);
+  ctx.save();
+
+  if (shake > 0) {
+    ctx.translate(
+      (Math.random() - 0.5) * shake,
+      (Math.random() - 0.5) * shake
+    );
+    shake--;
+  }
 
   ctx.fillStyle = "#70c5ce";
   ctx.fillRect(0, 0, W, H);
@@ -118,43 +175,47 @@ function draw() {
   }
 
   bird.draw();
+  ctx.restore();
 
-  if (gameState === "start") {
+  if (state === "start") {
     ctx.fillStyle = "#000";
     ctx.font = "20px system-ui";
     ctx.textAlign = "center";
     ctx.fillText("Click or press Space", W/2, H/2 - 60);
   }
 
-  if (gameState === "over") {
-    ctx.fillStyle = "#000";
-    ctx.font = "28px system-ui";
-    ctx.textAlign = "center";
-    ctx.fillText("Game Over", W/2, H/2);
-    ctx.font = "16px system-ui";
-    ctx.fillText("Press R to restart", W/2, H/2 + 30);
+  if (state === "over") {
+    drawScoreScreen();
   }
 }
 
-let frames = 0;
 function loop() {
-  frames++;
   update();
   draw();
   requestAnimationFrame(loop);
 }
 
+/* input */
+function unlockSound() {
+  if (!soundUnlocked) {
+    Object.values(sounds).forEach(s => s.play().then(() => s.pause()));
+    soundUnlocked = true;
+  }
+}
+
 document.addEventListener("keydown", e => {
   if (e.code === "Space") {
-    if (gameState === "start") gameState = "playing";
-    if (gameState === "playing") bird.flap();
+    unlockSound();
+    if (state === "start") state = "playing";
+    if (state === "playing") bird.flap();
   }
   if (e.key.toLowerCase() === "r") reset();
 });
 
 document.addEventListener("click", () => {
-  if (gameState === "start") gameState = "playing";
-  if (gameState === "playing") bird.flap();
+  unlockSound();
+  if (state === "start") state = "playing";
+  if (state === "playing") bird.flap();
 });
 
 reset();
