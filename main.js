@@ -5,7 +5,7 @@ const W = canvas.width;
 const H = canvas.height;
 
 const images = {};
-["bird.png", "pipe.png", "ground.png"].forEach(name => {
+["jughead.PNG", "pipe.PNG", "ground.PNG"].forEach(name => {
   const img = new Image();
   img.src = `assets/${name}`;
   images[name] = img;
@@ -13,8 +13,8 @@ const images = {};
 
 /* sounds */
 const sounds = {
-  score: new Audio("assets/score.wav"),
-  hit: new Audio("assets/hit.wav")
+  score: new Audio("assets/score.mp3"),
+  hit: new Audio("assets/hit.mp3")
 };
 let soundUnlocked = false;
 
@@ -42,7 +42,7 @@ const bird = {
     this.vel = this.jump;
   },
   draw() {
-    const img = images["bird.png"];
+    const img = images["jughead.PNG"];
     if (img.complete && img.naturalWidth) {
       ctx.drawImage(img, this.x - this.w/2, this.y - this.h/2, this.w, this.h);
     } else {
@@ -220,3 +220,4 @@ document.addEventListener("click", () => {
 
 reset();
 loop();
+
