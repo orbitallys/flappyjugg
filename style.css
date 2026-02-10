@@ -32,7 +32,7 @@ body {
 .ad-banner {
   width: 200px;
   height: 600px;
-  background: rgba(0,0,0,0.1);
+  background: rgba(0,0,0,0.1); /* Placeholder gray if image missing */
   border: 2px solid #000;
   display: flex;
   align-items: center;
@@ -101,3 +101,15 @@ canvas {
   padding: 6px 10px;
   border: 1px solid #000;
 }
+
+#screensaver {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background-color: #000;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#screensaver.hidden { display: none; }
+#screensaver img { max-width: 100%; max-height: 100%; object-fit: contain; }
