@@ -1,6 +1,8 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
+ctx.imageSmoothingEnabled = false;
+
 const W = canvas.width;
 const H = canvas.height;
 
@@ -50,23 +52,27 @@ const bird = {
   }
 };
 
-/* ground */
 const ground = {
   h: 96,
   y: H - 96,
   speed: 2.2,
   offset: 0,
   update() {
-    this.offset = (this.offset + this.speed) % W;
+    this.offset += this.speed;
   },
   draw() {
     const img = images["ground.PNG"];
-    if (img.complete && img.naturalWidth) {
-      ctx.drawImage(img, -this.offset, this.y, W, this.h);
-      ctx.drawImage(img, W - this.offset, this.y, W, this.h);
-    } else {
+    if (!img.complete || !img.naturalWidth) {
       ctx.fillStyle = "#c2a16a";
       ctx.fillRect(0, this.y, W, this.h);
+      return;
+    }
+
+    const tileW = img.naturalWidth;
+    const xOffset = Math.floor(this.offset) % tileW;
+
+    for (let x = -xOffset; x < W + tileW; x += tileW) {
+      ctx.drawImage(img, x, this.y, tileW, this.h);
     }
   }
 };
@@ -131,7 +137,7 @@ function update() {
         bird.x + bird.w / 2 > p.x &&
         bird.x - bird.w / 2 < p.x + pipeWidth &&
         (bird.y - bird.h / 2 < p.top ||
-         bird.y + bird.h / 2 > p.top + pipeGap)
+          bird.y + bird.h / 2 > p.top + pipeGap)
       ) {
         die();
       }
@@ -150,21 +156,32 @@ function drawScoreScreen() {
 
   ctx.textAlign = "center";
 
+  // Crashed Title
   ctx.font = "bold 42px system-ui";
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = "#000";
+  ctx.strokeText("Crashed!", W / 2, H / 2 - 80);
   ctx.fillStyle = "#fff";
   ctx.fillText("Crashed!", W / 2, H / 2 - 80);
 
+  // Score
   ctx.font = "bold 28px system-ui";
+  ctx.lineWidth = 4;
+  ctx.strokeText(`Score: ${score}`, W / 2, H / 2 - 10);
   ctx.fillStyle = "#ffd166";
   ctx.fillText(`Score: ${score}`, W / 2, H / 2 - 10);
 
+  // Best
   ctx.font = "20px system-ui";
+  ctx.lineWidth = 3;
+  ctx.strokeText(`Best: ${best}`, W / 2, H / 2 + 30);
   ctx.fillStyle = "#fff";
   ctx.fillText(`Best: ${best}`, W / 2, H / 2 + 30);
 
+  // Restart Text
   ctx.font = "16px system-ui";
   ctx.fillStyle = "#ddd";
-  ctx.fillText("Press R to retry", W / 2, H / 2 + 70);
+  ctx.fillText("Press R to restart the journey", W / 2, H / 2 + 70);
 }
 
 function draw() {
@@ -178,7 +195,7 @@ function draw() {
     shake--;
   }
 
-  ctx.fillStyle = "#70c5ce";
+  ctx.fillStyle = "#e8e8e8";
   ctx.fillRect(0, 0, W, H);
 
   for (const p of pipes) {
